@@ -124,7 +124,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nvim-presence-rs"
+name = "nvimsence-rs"
 version = "0.1.0"
 dependencies = [
  "discord-rich-presence",
