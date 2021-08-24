@@ -44,5 +44,9 @@
     "typescriptreact": "tsx",
     "vue": "vue",
     "xml": "xml",
-    "yaml": "yaml"
+    "yaml": "yaml",
+
+    "netrw": "folder",
+    "nerdtree": "folder",
+    "vimfiler": "folder"
 }
