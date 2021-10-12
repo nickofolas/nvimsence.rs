@@ -1,3 +1,4 @@
+use crate::config::NvimsenceConfig;
 use discord_rich_presence::{
     activity::{self, Assets, Button, Timestamps},
     DiscordIpc,
@@ -25,7 +26,8 @@ pub struct EventHandler<T: DiscordIpc> {
     pub nvim: Neovim,
     pub rich_presence: T,
     start_time: i64,
-    config: Option<Value>,
+    icons: Option<Value>,
+    config: Option<NvimsenceConfig>,
 }
 
 impl<T: DiscordIpc> EventHandler<T> {
@@ -37,13 +39,14 @@ impl<T: DiscordIpc> EventHandler<T> {
             nvim,
             rich_presence,
             start_time: SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as i64,
+            icons: None,
             config: None,
         })
     }
 
     pub fn listen(&mut self) -> Result<()> {
         let receiver = self.nvim.session.start_event_loop_channel();
-        self.load_config()?;
+        self.load()?;
         self.update_presence().unwrap_or(());
 
         for (event, _) in receiver {
@@ -64,7 +67,10 @@ impl<T: DiscordIpc> EventHandler<T> {
         Ok(())
     }
 
-    fn load_config(&mut self) -> Result<()> {
+    fn load(&mut self) -> Result<()> {
+        let config = NvimsenceConfig::from_nvim(&mut self.nvim)?;
+        self.config = Some(config);
+
         let path = self
             .nvim
             .eval("richPresence#execdir")?
@@ -77,8 +83,8 @@ impl<T: DiscordIpc> EventHandler<T> {
         let mut buffer = String::new();
         file.read_to_string(&mut buffer)?;
 
-        let config: Value = serde_json::from_str(&buffer)?;
-        self.config = Some(config);
+        let icons: Value = serde_json::from_str(&buffer)?;
+        self.icons = Some(icons);
 
         Ok(())
     }
@@ -93,10 +99,7 @@ impl<T: DiscordIpc> EventHandler<T> {
         };
 
         let details = format!("{}/{}", dirname, filename);
-        let state = format!(
-            "{} [{} LOC]",
-            filesize, line_count
-        );
+        let state = format!("{} [{} LOC]", filesize, line_count);
         let get_image = self.get_image()?;
         let image = get_image.as_str();
 
@@ -141,14 +144,14 @@ impl<T: DiscordIpc> EventHandler<T> {
         let filetype = self.get_filetype()?;
 
         if self
-            .config
+            .icons
             .as_ref()
             .unwrap()
             .as_object()
             .unwrap()
             .contains_key(&filetype)
         {
-            return Ok(self.config.as_ref().unwrap()[filetype]
+            return Ok(self.icons.as_ref().unwrap()[filetype]
                 .as_str()
                 .unwrap()
                 .to_owned());

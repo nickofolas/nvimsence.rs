@@ -8,6 +8,8 @@ let s:bin = richPresence#execdir . '/target/release/nvimsence-rs'
 function! s:connect()
     let id = richPresence#init()
 
+    call s:loadDefaultConfig()
+
     if 0 == id
         echoerr "Failed to start Rich Presence"
     elseif -1 == id
@@ -20,6 +22,12 @@ function! s:connect()
         command! DisconnectRichPresence call s:RestartWrapper(function('rpcnotify'), s:presenceJobId, 'disconnect')
         command! RestartRichPresence call s:restartPlugin()
     endif
+endfunction
+
+function! s:loadDefaultConfig()
+    let g:nvimsence_details = "{project}/{filename}"
+    let g:nvimsence_something = "..."
+    let g:nvimsence_nothing = "..."
 endfunction
 
 function! s:RestartWrapper(callback, ...)
