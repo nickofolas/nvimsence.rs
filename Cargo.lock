@@ -37,9 +37,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "discord-rich-presence"
-version = "0.1.7"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "059f7583e8a3e1c797d2e45b61412f84008a9503e28607d0c4c0674dcfb4fcb5"
+checksum = "de4b1a19946a50caff0e1fd9b44510e24e7c0cdbc1d4ff0abab5e57a61ee786f"
 dependencies = [
  "serde",
  "serde_derive",
