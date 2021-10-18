@@ -25,9 +25,21 @@ function! s:connect()
 endfunction
 
 function! s:loadDefaultConfig()
-    let g:nvimsence_details = "{project}/{filename}"
-    let g:nvimsence_something = "..."
-    let g:nvimsence_nothing = "..."
+    if !exists("g:nvimsence_details")
+        let g:nvimsence_details = "{project}/{filename}"
+    endif
+
+    if !exists("g:nvimsence_state")
+        let g:nvimsence_state = "{filesize} [{lines} LOC]"
+    endif
+
+    if !exists("g:nvimsence_show_elapsed")
+        let g:nvimsence_show_elapsed = 1
+    endif
+
+    if !exists("g:nvimsence_show_buttons")
+        let g:nvimsence_show_buttons = 1
+    endif
 endfunction
 
 function! s:RestartWrapper(callback, ...)

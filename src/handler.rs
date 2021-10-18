@@ -90,6 +90,8 @@ impl<T: DiscordIpc> EventHandler<T> {
     }
 
     fn update_presence(&mut self) -> Result<()> {
+        // Define display vars
+
         let filename = self.get_filename()?;
         let dirname = self.get_project()?;
         let filesize = self.get_filesize()?;
@@ -98,17 +100,34 @@ impl<T: DiscordIpc> EventHandler<T> {
             buf.line_count(&mut self.nvim)?
         };
 
-        let details = format!("{}/{}", dirname, filename);
-        let state = format!("{} [{} LOC]", filesize, line_count);
         let get_image = self.get_image()?;
         let image = get_image.as_str();
 
+        let filetype = self.get_filetype()?;
+        let button_url = self.get_button_url()?;
+
+        // End definitions
+
+        let config = self.config.as_mut().unwrap();
+        let details = {
+            let fmt = config.get("g:nvimsence_details")?;
+            fmt.replace("{project}", &dirname)
+                .replace("{filename}", &filename)
+        };
+        let state = {
+            let fmt = config.get("g:nvimsence_state")?;
+            fmt.replace("{filesize}", &filesize)
+                .replace("{lines}", &line_count.to_string())
+        };
+
         let mut payload = activity::Activity::new()
             .state(state.as_str())
-            .details(details.as_str())
-            .timestamps(Timestamps::new().start(self.start_time));
+            .details(details.as_str());
 
-        let filetype = self.get_filetype()?;
+        if config.get("g:nvimsence_show_elapsed")? == "true" {
+            payload = payload.timestamps(Timestamps::new().start(self.start_time));
+        }
+
         let large_text = format!("Editing a {} file", filetype);
         let assets = Assets::new()
             .large_image(image)
@@ -117,8 +136,7 @@ impl<T: DiscordIpc> EventHandler<T> {
             .small_text("NeoVim");
         payload = payload.assets(assets);
 
-        let button_url = self.get_button_url()?;
-        if !button_url.is_empty() {
+        if config.get("g:nvimsence_show_buttons")? == "true" && !button_url.is_empty() {
             payload = payload.buttons(vec![Button::new("View Repository", &button_url)]);
         }
 
@@ -131,11 +149,11 @@ impl<T: DiscordIpc> EventHandler<T> {
         let value = self.nvim.eval("&filetype")?;
         let filetype = value.as_str().unwrap();
 
-        if !filetype.is_empty() {
-            Ok(filetype.to_owned())
-        } else {
+        if filetype.is_empty() {
             let value = self.nvim.eval("expand('%:e')")?;
             let filetype = value.as_str().unwrap();
+            Ok(filetype.to_owned())
+        } else {
             Ok(filetype.to_owned())
         }
     }
@@ -155,9 +173,8 @@ impl<T: DiscordIpc> EventHandler<T> {
                 .as_str()
                 .unwrap()
                 .to_owned());
-        } else {
-            Ok("text".into())
-        }
+        };
+        Ok("text".into())
     }
 
     fn get_filename(&mut self) -> Result<String> {
@@ -250,8 +267,7 @@ impl<T: DiscordIpc> EventHandler<T> {
             let captures = REPO_URL.captures(&git_remote).unwrap();
             let (host, path) = (&captures[1], &captures[2]);
             return Ok(format!("https://{}/{}", host, path));
-        } else {
-            Ok(git_remote)
         }
+        Ok(git_remote)
     }
 }
