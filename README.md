@@ -8,11 +8,17 @@ A NeoVim plugin for generating Discord Rich Presences, and written in Rust.
 " Available variables:
 " * {project} - The name of the active project. This will either be the parent directory, or, if the file is part of a Git tree, the name of the Git repository
 " * {filename} - The name of the active file. Includes the file extension
+" * {filesize} - The size of the file, given in MiB/GiB etc
+" * {lines} - The total number of lines in the active file
+" * {none} - Do not show state in the rich presence
 let g:nvimsence_details = "{project}/{filename}"
 
 " Available variables:
+" * {project} - The name of the active project. This will either be the parent directory, or, if the file is part of a Git tree, the name of the Git repository
+" * {filename} - The name of the active file. Includes the file extension
 " * {filesize} - The size of the file, given in MiB/GiB etc
 " * {lines} - The total number of lines in the active file
+" * {none} - Do not show state in the rich presence
 let g:nvimsence_state = "{filesize} [{lines} LOC]"
 
 " Boolean [0|1]

@@ -113,16 +113,25 @@ impl<T: DiscordIpc> EventHandler<T> {
             let fmt = config.get("g:nvimsence_details")?;
             fmt.replace("{project}", &dirname)
                 .replace("{filename}", &filename)
+                .replace("{filesize}", &filesize)
+                .replace("{lines}", &line_count.to_string())
         };
         let state = {
             let fmt = config.get("g:nvimsence_state")?;
-            fmt.replace("{filesize}", &filesize)
+            fmt.replace("{project}", &dirname)
+                .replace("{filename}", &filename)
+                .replace("{filesize}", &filesize)
                 .replace("{lines}", &line_count.to_string())
         };
 
-        let mut payload = activity::Activity::new()
-            .state(state.as_str())
-            .details(details.as_str());
+        let mut payload = activity::Activity::new();
+
+        if !(state.as_str() == "{none}") {
+            payload = payload.state(state.as_str());
+        }
+        if !(details.as_str() == "{none}") {
+            payload = payload.details(details.as_str());
+        }
 
         if config.get("g:nvimsence_show_elapsed")? == "true" {
             payload = payload.timestamps(Timestamps::new().start(self.start_time));
