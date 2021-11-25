@@ -3,7 +3,13 @@ if !exists("s:presenceJobId")
 endif
 
 let richPresence#execdir = resolve(expand('<sfile>:p:h') . '/..')
-let s:bin = richPresence#execdir . '/target/release/nvimsence-rs'
+
+if exists("g:rich_presence_binary")
+    let s:bin = richPresence#execdir . "/" . substitute(g:rich_presence_binary, "^\/", "", "")
+else
+    echoerr "Please provide name of the rich presence binary"
+    finish
+endif
 
 function! s:connect()
     let id = richPresence#init()

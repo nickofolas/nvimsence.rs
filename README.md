@@ -2,6 +2,27 @@
 
 A NeoVim plugin for generating Discord Rich Presences, and written in Rust.
 
+### Installation
+**Vundle**
+```vim
+Plugin 'nickofolas/nvimsence.rs'
+```
+
+This installs the vimscript requirements. The bulk of the plugin is within the Rust binary.
+
+Precompiled binaries are available in the releases of this repository. If your system matches one of the binaries, download it and move it into the plugin's directory (ex `~/.vim/bundle/nvimsence.rs/`)
+
+Finally, in your `vimrc`, add:
+```vim
+let g:rich_presence_binary = " the name of the binary that you downloaded
+```
+
+If your system if not included in the pre-compiled binaries, first ensure you have the Rust toolchain installed on your system. Then, change directories into the plugin's directory (see above). Run `cargo build --release`, and add:
+```vim
+let g:rich_presence_binary = "target/release/nvimsence-rs"
+```
+to your `vimrc`. At this point, the plugin should work.
+
 ### Configuration
 `nvimsence.rs` supports some basic configuration, shown below (with default values):
 ```vim
@@ -32,5 +53,3 @@ let g:nvimsence_show_buttons = 1
 
 Notes:
 * `nvimsence.rs` is currently a WIP project
-* Installation currently requires compilation after downloading. A future goal is to distribute pre-compiled binaries to simplify the installation process
-  * Pre-compiled binaries should be included in releases. Ideally, an install script will simplify this further soon
