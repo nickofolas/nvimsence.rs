@@ -33,3 +33,4 @@ let g:nvimsence_show_buttons = 1
 Notes:
 * `nvimsence.rs` is currently a WIP project
 * Installation currently requires compilation after downloading. A future goal is to distribute pre-compiled binaries to simplify the installation process
+  * Pre-compiled binaries should be included in releases. Ideally, an install script will simplify this further soon
