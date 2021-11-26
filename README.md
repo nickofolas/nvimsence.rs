@@ -5,7 +5,7 @@ A NeoVim plugin for generating Discord Rich Presences, and written in Rust.
 ### Installation
 **Vundle**
 ```vim
-Plugin 'nickofolas/nvimsence.rs'
+Plugin 'arcaaaa/nvimsence.rs'
 ```
 
 This installs the vimscript requirements. The bulk of the plugin is within the Rust binary.
