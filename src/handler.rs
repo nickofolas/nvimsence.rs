@@ -126,10 +126,10 @@ impl<T: DiscordIpc> EventHandler<T> {
 
         let mut payload = activity::Activity::new();
 
-        if !(state.as_str() == "{none}") {
+        if state.as_str() != "{none}" {
             payload = payload.state(state.as_str());
         }
-        if !(details.as_str() == "{none}") {
+        if details.as_str() != "{none}" {
             payload = payload.details(details.as_str());
         }
 
