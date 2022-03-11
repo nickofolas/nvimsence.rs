@@ -1,7 +1,7 @@
 use crate::config::NvimsenceConfig;
 use discord_rich_presence::{
     activity::{self, Assets, Button, Timestamps},
-    DiscordIpc,
+    DiscordIpc, DiscordIpcClient,
 };
 use lazy_static::lazy_static;
 use neovim_lib::{Neovim, NeovimApi, Session};
@@ -22,16 +22,16 @@ type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 const ABBREVIATIONS: [&str; 4] = ["KiB", "MiB", "GiB", "TiB"];
 
-pub struct EventHandler<T: DiscordIpc> {
+pub struct EventHandler {
     pub nvim: Neovim,
-    pub rich_presence: T,
+    pub rich_presence: DiscordIpcClient,
     start_time: i64,
     icons: Option<Value>,
     config: Option<NvimsenceConfig>,
 }
 
-impl<T: DiscordIpc> EventHandler<T> {
-    pub fn new(rich_presence: T) -> Result<Self> {
+impl EventHandler {
+    pub fn new(rich_presence: DiscordIpcClient) -> Result<Self> {
         let session = Session::new_parent()?;
         let nvim = Neovim::new(session);
 
